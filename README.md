@@ -1,260 +1,253 @@
-# Methodology
+This is a methodology document for the [data story](http://newslab.ie/ddjucd/) written as a part of a Intro to Data Journalism course at UCD.
 
-### Data Sources
+
+[[_TOC_]]
+
+
+## Data Sources
 
 **1) The Irish Property Price Register – Geocoded to Small Areas**
-    Property Price Register (PPR) data from years 2012-2017 (approx 220k property sales geocoded by Shane Lynn and released on his blog as open data: https://www.shanelynn.ie/the-irish-property-price-register-geocoded-to-small-areas/
+    
+Property Price Register (PPR) data from years 2012-2017 (approx 220k property sales geocoded by Shane Lynn and released on his blog as open data: https://www.shanelynn.ie/the-irish-property-price-register-geocoded-to-small-areas/
 
 **2) Census 2016 Small Area Population Statistics**
     Electoral Divisions (Generalised 20M) data set whicih includes 799 variables:
     https://www.cso.ie/en/census/census2016reports/census2016smallareapopulationstatistics/
+<br>
 
-### Data Processing
+## Data Processing
 
-1) **Cleaning the PPR data set with Open Refine**
-    + Reordering columns for better overview
-    + Removing blanks for *electoral_district_id* column
-    + Include only Electoral Divisions with 50 or more property sales
-    + Calculate average price per Electoral Division
-    + reorder and remove unnecessary columns and rows
-    + Include only data for Dublin 
-    \
-    Exact operation history (copy/paste the code inside Undo/Redo>Apply tab in OpenRefine):
-    ```JSON
-    [
-        {
-        "op": "core/column-reorder",
-        "columnNames": [
-            "Column",
-            "electoral_district",
-            "electoral_district_id",
-            "price",
-            "year",
-            "input_string",
-            "ppr_county",
-            "not_full_market_price",
-            "vat_exclusive",
-            "description_of_property",
-            "property_size_description",
-            "date",
-            "formatted_address",
-            "accuracy",
-            "latitude",
-            "longitude",
-            "postcode",
-            "type",
-            "geo_county",
-            "region",
-            "small_area"
-        ],
-        "description": "Reorder columns"
-        },
-        {
-        "op": "core/column-reorder",
-        "columnNames": [
-            "electoral_district_id",
-            "electoral_district",
-            "price",
-            "year",
-            "input_string",
-            "ppr_county",
-            "not_full_market_price",
-            "vat_exclusive",
-            "description_of_property",
-            "property_size_description",
-            "date",
-            "formatted_address",
-            "accuracy",
-            "latitude",
-            "longitude",
-            "postcode",
-            "type",
-            "geo_county",
-            "region",
-            "small_area"
-        ],
-        "description": "Reorder columns"
-        },
-        {
-        "op": "core/row-removal",
-        "engineConfig": {
-            "facets": [
-            {
-                "type": "list",
-                "name": "electoral_district_id",
-                "expression": "value",
-                "columnName": "electoral_district_id",
-                "invert": false,
-                "omitBlank": false,
-                "omitError": false,
-                "selection": [
-                {
-                    "v": {
-                    "v": "NA",
-                    "l": "NA"
-                    }
-                }
-                ],
-                "selectBlank": false,
-                "selectError": false
-            }
+#### Cleaning the PPR data set with Open Refine
+    
++ Reordering columns for better overview
++ Removing blanks for *electoral_district_id* column
++ Include only Electoral Divisions with 50 or more property sales
++ Calculate average price per Electoral Division
++ reorder and remove unnecessary columns and rows
++ Include only data for Dublin 
+    <br>
+    Exact operation history (copy/paste the code inside Undo/Redo>Apply tab inside [OpenRefine](http://openrefine.org/download.html)):
+    <br>
+
+    ```
+    [{
+            "op": "core/column-reorder",
+            "columnNames": [
+                "Column",
+                "electoral_district",
+                "electoral_district_id",
+                "price",
+                "year",
+                "input_string",
+                "ppr_county",
+                "not_full_market_price",
+                "vat_exclusive",
+                "description_of_property",
+                "property_size_description",
+                "date",
+                "formatted_address",
+                "accuracy",
+                "latitude",
+                "longitude",
+                "postcode",
+                "type",
+                "geo_county",
+                "region",
+                "small_area"
             ],
-            "mode": "row-based"
-        },
-        "description": "Remove rows"
+            "description": "Reorder columns"
         },
         {
-        "op": "core/row-removal",
-        "engineConfig": {
-            "facets": [
-            {
-                "type": "list",
-                "name": "electoral_district_id",
-                "expression": "grel:facetCount(value, \"value\", \"electoral_district_id\")  > 49",
-                "columnName": "electoral_district_id",
-                "invert": false,
-                "omitBlank": false,
-                "omitError": false,
-                "selection": [
-                {
-                    "v": {
-                    "v": false,
-                    "l": "false"
-                    }
-                }
-                ],
-                "selectBlank": false,
-                "selectError": false
-            }
+            "op": "core/column-reorder",
+            "columnNames": [
+                "electoral_district_id",
+                "electoral_district",
+                "price",
+                "year",
+                "input_string",
+                "ppr_county",
+                "not_full_market_price",
+                "vat_exclusive",
+                "description_of_property",
+                "property_size_description",
+                "date",
+                "formatted_address",
+                "accuracy",
+                "latitude",
+                "longitude",
+                "postcode",
+                "type",
+                "geo_county",
+                "region",
+                "small_area"
             ],
-            "mode": "row-based"
-        },
-        "description": "Remove rows"
+            "description": "Reorder columns"
         },
         {
-        "op": "core/row-reorder",
-        "mode": "row-based",
-        "sorting": {
-            "criteria": [
-            {
-                "valueType": "string",
-                "column": "electoral_district_id",
-                "blankPosition": 2,
-                "errorPosition": 1,
-                "reverse": false,
-                "caseSensitive": false
-            }
-            ]
-        },
-        "description": "Reorder rows"
-        },
-        {
-        "op": "core/blank-down",
-        "engineConfig": {
-            "facets": [],
-            "mode": "row-based"
-        },
-        "columnName": "electoral_district_id",
-        "description": "Blank down cells in column electoral_district_id"
+            "op": "core/row-removal",
+            "engineConfig": {
+                "facets": [{
+                    "type": "list",
+                    "name": "electoral_district_id",
+                    "expression": "value",
+                    "columnName": "electoral_district_id",
+                    "invert": false,
+                    "omitBlank": false,
+                    "omitError": false,
+                    "selection": [{
+                        "v": {
+                            "v": "NA",
+                            "l": "NA"
+                        }
+                    }],
+                    "selectBlank": false,
+                    "selectError": false
+                }],
+                "mode": "row-based"
+            },
+            "description": "Remove rows"
         },
         {
-        "op": "core/column-addition",
-        "engineConfig": {
-            "facets": [],
-            "mode": "record-based"
-        },
-        "baseColumnName": "price",
-        "expression": "grel:floor(sum(row.record.cells.price.value)/length(row.record.cells.price.value))",
-        "onError": "set-to-blank",
-        "newColumnName": "average_price",
-        "columnInsertIndex": 3,
-        "description": "Create column average_price at index 3 based on column price using expression grel:floor(sum(row.record.cells.price.value)/length(row.record.cells.price.value))"
+            "op": "core/row-removal",
+            "engineConfig": {
+                "facets": [{
+                    "type": "list",
+                    "name": "electoral_district_id",
+                    "expression": "grel:facetCount(value, \"value\", \"electoral_district_id\")  > 49",
+                    "columnName": "electoral_district_id",
+                    "invert": false,
+                    "omitBlank": false,
+                    "omitError": false,
+                    "selection": [{
+                        "v": {
+                            "v": false,
+                            "l": "false"
+                        }
+                    }],
+                    "selectBlank": false,
+                    "selectError": false
+                }],
+                "mode": "row-based"
+            },
+            "description": "Remove rows"
         },
         {
-        "op": "core/column-reorder",
-        "columnNames": [
-            "electoral_district_id",
-            "average_price",
-            "electoral_district",
-            "ppr_county"
-        ],
-        "description": "Reorder columns"
+            "op": "core/row-reorder",
+            "mode": "row-based",
+            "sorting": {
+                "criteria": [{
+                    "valueType": "string",
+                    "column": "electoral_district_id",
+                    "blankPosition": 2,
+                    "errorPosition": 1,
+                    "reverse": false,
+                    "caseSensitive": false
+                }]
+            },
+            "description": "Reorder rows"
         },
         {
-        "op": "core/row-removal",
-        "engineConfig": {
-            "facets": [
-            {
-                "type": "list",
-                "name": "electoral_district_id",
-                "expression": "isBlank(value)",
-                "columnName": "electoral_district_id",
-                "invert": false,
-                "omitBlank": false,
-                "omitError": false,
-                "selection": [
-                {
-                    "v": {
-                    "v": true,
-                    "l": "true"
-                    }
-                }
-                ],
-                "selectBlank": false,
-                "selectError": false
-            }
+            "op": "core/blank-down",
+            "engineConfig": {
+                "facets": [],
+                "mode": "row-based"
+            },
+            "columnName": "electoral_district_id",
+            "description": "Blank down cells in column electoral_district_id"
+        },
+        {
+            "op": "core/column-addition",
+            "engineConfig": {
+                "facets": [],
+                "mode": "record-based"
+            },
+            "baseColumnName": "price",
+            "expression": "grel:floor(sum(row.record.cells.price.value)/length(row.record.cells.price.value))",
+            "onError": "set-to-blank",
+            "newColumnName": "average_price",
+            "columnInsertIndex": 3,
+            "description": "Create column average_price at index 3 based on column price using expression grel:floor(sum(row.record.cells.price.value)/length(row.record.cells.price.value))"
+        },
+        {
+            "op": "core/column-reorder",
+            "columnNames": [
+                "electoral_district_id",
+                "average_price",
+                "electoral_district",
+                "ppr_county"
             ],
-            "mode": "row-based"
-        },
-        "description": "Remove rows"
+            "description": "Reorder columns"
         },
         {
-        "op": "core/row-removal",
-        "engineConfig": {
-            "facets": [
-            {
-                "type": "list",
-                "name": "ppr_county",
-                "expression": "value",
-                "columnName": "ppr_county",
-                "invert": true,
-                "omitBlank": false,
-                "omitError": false,
-                "selection": [
-                {
-                    "v": {
-                    "v": "Dublin",
-                    "l": "Dublin"
-                    }
-                }
-                ],
-                "selectBlank": false,
-                "selectError": false
-            }
-            ],
-            "mode": "row-based"
+            "op": "core/row-removal",
+            "engineConfig": {
+                "facets": [{
+                    "type": "list",
+                    "name": "electoral_district_id",
+                    "expression": "isBlank(value)",
+                    "columnName": "electoral_district_id",
+                    "invert": false,
+                    "omitBlank": false,
+                    "omitError": false,
+                    "selection": [{
+                        "v": {
+                            "v": true,
+                            "l": "true"
+                        }
+                    }],
+                    "selectBlank": false,
+                    "selectError": false
+                }],
+                "mode": "row-based"
+            },
+            "description": "Remove rows"
         },
-        "description": "Remove rows"
+        {
+            "op": "core/row-removal",
+            "engineConfig": {
+                "facets": [{
+                    "type": "list",
+                    "name": "ppr_county",
+                    "expression": "value",
+                    "columnName": "ppr_county",
+                    "invert": true,
+                    "omitBlank": false,
+                    "omitError": false,
+                    "selection": [{
+                        "v": {
+                            "v": "Dublin",
+                            "l": "Dublin"
+                        }
+                    }],
+                    "selectBlank": false,
+                    "selectError": false
+                }],
+                "mode": "row-based"
+            },
+            "description": "Remove rows"
         }
     ]
     ```
+<br>
 
-2) **Further data processing and analysis in JupyterLab**
-    + Preparing both data sets for merging
-    + Calculating percentage for each Census variable
-    \
+### Further data processing and analysis in JupyterLab
+    
++ Preparing both data sets for merging
++ Calculating percentage for each Census variable
+\
     Data structure:
 
+    | Electoral Division       | Average price (€)| Variable 1 (%)|Variable 2 (%) |...| Variable 799 (%)|
+    | ------------------------ |:-------------:|:---------: |:---------:|:---------:|-----:|
+    | 00                 | 266258.0 |      0.55      |1.10	|...|13.32 |
+    | 01                 | 261902.0      |  1.20          | 0.97|...|7.41 |
+    | ...            | ...      |        ...    |... |...|... |
+    | 303                 | 594632.0      |    0.85        |1.50 |...|2.04 |
 
-        | Electoral Division       | Average price (€)| Variable 1 (%)|Variable 2 (%) |...| Variable 799 (%)|
-        | ------------------------ |:-------------:|:---------: |:---------:|:---------:|-----:|
-        | 00                 | 266258.0 |      0.55      |1.10	|...|13.32 |
-        | 01                 | 261902.0      |  1.20          | 0.97|...|7.41 |
-        | ...            | ...      |        ...    |... |...|... |
-        | 303                 | 594632.0      |    0.85        |1.50 |...|2.04 |
+<br>
 
-    + Calculating correlation and p-value for each Average price vs each variable
-    + Ordering data to see the biggest correlations
++ Calculating correlation and p-value for each Average price vs each variable
++ Ordering data to see the biggest correlations
     \
     Python code:
     ```Python
