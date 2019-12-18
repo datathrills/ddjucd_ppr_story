@@ -1,7 +1,7 @@
 This is a methodology document for the [data story](http://newslab.ie/ddjucd/) written as a part of a Intro to Data Journalism course at UCD.
 
 
-[[_TOC_]]
+[test](#jupyerLab)
 
 
 ## Data Sources
@@ -229,7 +229,7 @@ Property Price Register (PPR) data from years 2012-2017 (approx 220k property sa
     ]
     ```
 <br>
-
+<a name="jupyerLab"></a>
 ### Further data processing and analysis in JupyterLab
     
 + Preparing both data sets for merging
