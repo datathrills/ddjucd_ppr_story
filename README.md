@@ -434,4 +434,5 @@ Python code:
 
 * Map was done using QGIS and refined with Inkscape
 * Charts were done with Python using Matplotlib and also refined with Inkscape
-* The illustrations were hand drawn in Adobe Illustrator 
+* Dot plot was done with D3.js and refined with Inkscape
+* The illustration is hand drawn in Adobe Illustrator 
